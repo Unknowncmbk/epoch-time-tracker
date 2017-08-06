@@ -1,7 +1,13 @@
-# Epoch
+# Epoch Time Tracker
 A Python implementation of a time tracker for employees. Specifically, this software allows users to change between states, and monitor their respective sessions. Users are allowed to swap in and out of states, as well as starting/ending multiple sessions every day. 
 
 Optionally, Github integrations can be set up and track user commits, which are posted when a user logs out.
+
+Below is an image of the integration into Slack:
+![alt text](https://github.com/Unknowncmbk/epoch-time-tracker/blob/master/images/login.png "User Logging In")
+
+Below is an image of logging out of Slack:
+![alt text](https://github.com/Unknowncmbk/epoch-time-tracker/blob/master/images/timestamp_developer.png "User Logging Out")
 
 ## Requirements
 - [Python](https://www.python.org/download/releases/2.6/): Version 2.6 or higher.
@@ -16,12 +22,12 @@ Optionally, Github integrations can be set up and track user commits, which are 
 ## Installation
 Note: This project was compiled on CentOS 6.
 
-You'll need to install the [required modules](TODO) using a package installer. If you are not using CentOS 6, look for alternatives modules. 
+You'll need to install the [required modules](https://github.com/Unknowncmbk/epoch-time-tracker/blob/master/setup/install.txt) using a package installer. If you are not using CentOS 6, look for alternatives modules. 
 
-You'll need to run the [schema table](TODO) in order to populate the database with the correct information. Do not forget to create a new database!
+You'll need to run the [schema table](https://github.com/Unknowncmbk/epoch-time-tracker/blob/master/setup/database/database_schema.txt) in order to populate the database with the correct information. Do not forget to create a new database!
 
 ## Settings
-Fill out the appropriate settings in [settings.txt](TODO).
+Fill out the appropriate settings in [settings.txt](https://github.com/Unknowncmbk/epoch-time-tracker/blob/master/epoch/settings/settings.txt).
 
 Database Credentials:
 - `Host/Database/User/Pass` for a MySQL server.
