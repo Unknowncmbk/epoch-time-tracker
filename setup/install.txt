@@ -1,0 +1,8 @@
+# install python-pip for python modules
+yum install -y python-pip
+
+# install MySQL connector
+yum install -y MySQL-python
+
+# install Flask
+pip install Flask

@@ -1,0 +1,16 @@
+{  
+   "database_creds":{  
+      "host":"localhost",
+      "database":"db_name",
+      "user":"test_user",
+      "pass":"test_pass"
+   }, 
+   "slack_settings":{
+      "api_token":"xoxp-blahblahblah",
+      "api_url":"https://hooks.slack.com/services/BLAH",
+      "webhook_outgoing": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+   },
+   "github_settings":{
+      "webhook_outgoing": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+   }
+}

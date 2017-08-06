@@ -1,0 +1,163 @@
+/*****
+** Table Description:
+** Storage for users of Epoch.
+**
+** Description of attributes:
+** `uuid` is provided from Slack
+** `username` is the user's Slack name
+** `title` is the user's role
+** `team` is what team they belong to
+** `git_id` is the username for their Github
+** `monthly_hours` is their working weight
+** 
+** Reasoning for structure:
+** PK is the `uuid` field, as users have a unique id.
+*****/
+CREATE TABLE IF NOT EXISTS user(
+uuid VARCHAR(30) NOT NULL, 
+username VARCHAR(30) NOT NULL, 
+title VARCHAR(30), 
+team INT NOT NULL, 
+git_id VARCHAR(30) NOT NULL, 
+monthly_hours INT, 
+creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+FOREIGN KEY (team) REFERENCES team(id) ON DELETE CASCADE, 
+PRIMARY KEY (uuid)
+);
+
+/*****
+** Table Description:
+** Relation for teams.
+** 
+** Reasoning for structure:
+** PK is the `id` field, as users as teams only need an integer representation.
+*****/
+CREATE TABLE IF NOT EXISTS team(
+id INT NOT NULL, 
+name VARCHAR(30) NOT NULL, 
+PRIMARY KEY (id)
+);
+
+/*****
+** Table Description:
+** Storage for users of Github.
+**
+** Description of attributes:
+** `id` of the user from Github
+** `name` of the user from Github
+** 
+** Reasoning for structure:
+** PK is the `uuid` field, as users have a unique id.
+*****/
+CREATE TABLE IF NOT EXISTS git_user(
+id INT NOT NULL,  
+name VARCHAR(30) NOT NULL, 
+PRIMARY KEY (id)
+);
+
+/*****
+** Table Description:
+** Stores information on the user's current session.
+**
+** Description of attributes:
+** `state` of the user
+** `work_time` is the time in secs they've worked this session
+** 
+** Reasoning for structure:
+** PK is the `user_id` field, as this is a relation built upon the user table.
+*****/
+CREATE TABLE IF NOT EXISTS user_session(
+user_id VARCHAR(30) NOT NULL, 
+state VARCHAR(30) NOT NULL DEFAULT 'OFFLINE', 
+work_time INT NOT NULL DEFAULT 0, 
+updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+FOREIGN KEY (user_id) REFERENCES user(uuid) ON DELETE CASCADE, 
+PRIMARY KEY (user_id)
+);
+
+/*****
+** Table Description:
+** Stores github information about dev's repos.
+**
+** Description of attributes:
+** `id` generated from Github
+** `name` provided by Github
+*****/
+CREATE TABLE IF NOT EXISTS dev_repo(
+id INT NOT NULL, 
+name VARCHAR(50) NOT NULL, 
+PRIMARY KEY (id)
+);
+
+/*****
+** Table Description:
+** Logs users sessions.
+**
+** Description of attributes:
+** `work_time` is the time in seconds they worked
+** `start` is when they started to work
+** `end` is when they ended work
+** `approved` is the UUID of the slack user that approved of their session
+*****/
+CREATE TABLE IF NOT EXISTS log_user_session(
+id INT NOT NULL AUTO_INCREMENT, 
+user_id VARCHAR(30) NOT NULL, 
+work_time INT NOT NULL DEFAULT 0, 
+start TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+end TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+approved VARCHAR(30), 
+FOREIGN KEY (user_id) REFERENCES user(uuid) ON DELETE CASCADE, 
+PRIMARY KEY (id)
+);
+
+/*****
+** Table Description:
+** Log state transitions.
+**
+** Description of attributes:
+** `state` is the new state for the user
+** `prev_state` is the old state for the user
+*****/
+CREATE TABLE IF NOT EXISTS log_user_state(
+id INT NOT NULL AUTO_INCREMENT, 
+user_id VARCHAR(30) NOT NULL, 
+state VARCHAR(30) NOT NULL DEFAULT 'OFFLINE', 
+prev_state VARCHAR(30) NOT NULL DEFAULT 'OFFLINE', 
+creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+FOREIGN KEY (user_id) REFERENCES user(uuid) ON DELETE CASCADE, 
+PRIMARY KEY (id)
+);
+
+/*****
+** Table Description:
+** Logs commits that devs push to Github.
+**
+** Description of attributes:
+** `message` is the commit message
+** `url` is the commit url
+*****/
+CREATE TABLE IF NOT EXISTS log_dev_commit(
+id INT NOT NULL AUTO_INCREMENT, 
+repo_id INT NOT NULL, 
+user_id INT NOT NULL, 
+message BLOB, 
+url BLOB NOT NULL, 
+creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+FOREIGN KEY (repo_id) REFERENCES dev_repo(id) ON DELETE CASCADE, 
+FOREIGN KEY (user_id) REFERENCES git_user(id) ON DELETE CASCADE, 
+PRIMARY KEY (id)
+);
+
+INSERT INTO team (id, name) VALUES (1, 'Isles Softworks');
+INSERT INTO team (id, name) VALUES (10, 'Island Clash');
+INSERT INTO team (id, name) VALUES (20, 'PrisonMC');
+INSERT INTO team (id, name) VALUES (30, 'SkyblockMC');
+
+
+
+To create a user and setup initial stuff:
+INSERT INTO user (uuid, username, team) VALUES ('U2KM0E4SU', 'stephen', 1);
+INSERT INTO user_session (user_id) VALUES ('U2KM0E4SU');
+
+INSERT INTO user (uuid, username, team) VALUES ('U2J91D1QB', 'peraldon', 1);
+INSERT INTO user_session (user_id) VALUES ('U2J91D1QB');
