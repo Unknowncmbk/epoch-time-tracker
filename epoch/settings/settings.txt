@@ -5,6 +5,9 @@
       "user":"test_user",
       "pass":"test_pass"
    }, 
+   "flask_settings":{  
+      "port":5000
+   }, 
    "slack_settings":{
       "api_token":"xoxp-blahblahblah",
       "api_url":"https://hooks.slack.com/services/BLAH",
