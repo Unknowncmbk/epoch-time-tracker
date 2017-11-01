@@ -3,6 +3,7 @@
 # local imports
 from server import slack_handle
 from server import git_handle
+from server import bitbucket_handle
 from settings import settings
 
 # python modules
@@ -95,5 +96,25 @@ def handle_git_post():
 
     return Response('Okay.'), 200
 
+@app.route('/services/bitbucket', methods=['POST'])
+def handle_bitbucket_post():
+    '''
+    Serves Bitbucket's POST requests to this applet.
+    '''
+    # TODO add access log
+
+    # grab the data
+    data = request.data
+    print(data)
+
+    if data is not None:
+        json_data = json.loads(data)
+        return bitbucket_handle.parse_request(json_data)
+    else:
+        return Response('Malformed data request.'), 400
+
+
+    return Response('Okay.'), 200
+
 if __name__ == "__main__":
-    app.run(debug = True, port=settings.getSettings().flask_port)
+    app.run(host=settings.getSettings().flask_ip, debug = True, port=settings.getSettings().flask_port)
