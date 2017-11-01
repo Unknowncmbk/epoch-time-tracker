@@ -1,5 +1,18 @@
 /*****
 ** Table Description:
+** Relation for teams.
+** 
+** Reasoning for structure:
+** PK is the `id` field, as users as teams only need an integer representation.
+*****/
+CREATE TABLE IF NOT EXISTS team(
+id INT NOT NULL, 
+name VARCHAR(30) NOT NULL, 
+PRIMARY KEY (id)
+);
+
+/*****
+** Table Description:
 ** Storage for users of Epoch.
 **
 ** Description of attributes:
@@ -19,23 +32,11 @@ username VARCHAR(30) NOT NULL,
 title VARCHAR(30), 
 team INT NOT NULL, 
 git_id VARCHAR(30) NOT NULL, 
+bitbucket_email VARCHAR(50) NOT NULL, 
 monthly_hours INT, 
 creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
 FOREIGN KEY (team) REFERENCES team(id) ON DELETE CASCADE, 
 PRIMARY KEY (uuid)
-);
-
-/*****
-** Table Description:
-** Relation for teams.
-** 
-** Reasoning for structure:
-** PK is the `id` field, as users as teams only need an integer representation.
-*****/
-CREATE TABLE IF NOT EXISTS team(
-id INT NOT NULL, 
-name VARCHAR(30) NOT NULL, 
-PRIMARY KEY (id)
 );
 
 /*****
@@ -47,7 +48,7 @@ PRIMARY KEY (id)
 ** `name` of the user from Github
 ** 
 ** Reasoning for structure:
-** PK is the `uuid` field, as users have a unique id.
+** PK is the `uuid` field, as users have a unique id, and usernames can change.
 *****/
 CREATE TABLE IF NOT EXISTS git_user(
 id INT NOT NULL,  
@@ -77,11 +78,11 @@ PRIMARY KEY (user_id)
 
 /*****
 ** Table Description:
-** Stores github information about dev's repos.
+** Stores git information about dev's repos.
 **
 ** Description of attributes:
-** `id` generated from Github
-** `name` provided by Github
+** `id` generated from Github/Bitbucket
+** `name` provided by Github/Bitbucket
 *****/
 CREATE TABLE IF NOT EXISTS dev_repo(
 id INT NOT NULL, 
@@ -130,7 +131,7 @@ PRIMARY KEY (id)
 
 /*****
 ** Table Description:
-** Logs commits that devs push to Github.
+** Logs commits that devs push to git VCS software.
 **
 ** Description of attributes:
 ** `message` is the commit message
@@ -139,12 +140,12 @@ PRIMARY KEY (id)
 CREATE TABLE IF NOT EXISTS log_dev_commit(
 id INT NOT NULL AUTO_INCREMENT, 
 repo_id INT NOT NULL, 
-user_id INT NOT NULL, 
+user_id VARCHAR(30) NOT NULL, 
 message BLOB, 
 url BLOB NOT NULL, 
 creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
 FOREIGN KEY (repo_id) REFERENCES dev_repo(id) ON DELETE CASCADE, 
-FOREIGN KEY (user_id) REFERENCES git_user(id) ON DELETE CASCADE, 
+FOREIGN KEY (user_id) REFERENCES user(uuid) ON DELETE CASCADE, 
 PRIMARY KEY (id)
 );
 
