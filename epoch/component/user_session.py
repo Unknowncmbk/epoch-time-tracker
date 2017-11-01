@@ -18,7 +18,7 @@ def create_user_session(uuid):
 
     cur = db.cursor()
     query = '''INSERT INTO user_session (user_id, state, work_time) VALUES (%s, 'OFFLINE', 0);'''
-    cur.execute(query, uuid)
+    cur.execute(query, [uuid])
 
     # commit query
     db.commit()
@@ -39,7 +39,7 @@ def get_state(uuid):
 
     cur = db.cursor()
     query = '''SELECT state FROM user_session WHERE user_id=%s;'''
-    cur.execute(query, uuid)
+    cur.execute(query, [uuid])
 
     state = None
     for tup in cur:
