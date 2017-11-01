@@ -32,6 +32,10 @@ Fill out the appropriate settings in [settings.txt](https://github.com/Unknowncm
 Database Credentials:
 - `Host/Database/User/Pass` for a MySQL server.
 
+Flask Settings:
+- `host_ip`: The IP of the machine you are running this on. If you use localhost, POST payloads might not reach the application, so use the hard IP.
+- `port`: The port number to run flask on. 
+
 Slack Settings:
 - `api_token`: Your app's xoxp- token (available on the Install App page)
 - `api_url`: The webhook URL that you copied off the Incoming Webhook page
