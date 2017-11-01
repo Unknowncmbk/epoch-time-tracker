@@ -160,7 +160,7 @@ def create_commit_log(repo_id, user_id, commit_text, commit_url):
 
     Args:
         repo_id: The ID of the repository
-        user_id: The id of the user that did the commit
+        user_id: The uuid of the user that did the commit
         commit_text: The text that was in the commit
         commit_url: The URL for more information on the commit
 
@@ -172,7 +172,7 @@ def create_commit_log(repo_id, user_id, commit_text, commit_url):
 
     cur = db.cursor()
     query = '''INSERT INTO log_dev_commit (repo_id, user_id, message, url) VALUES (%s, %s, %s, %s);'''
-    data = (int(repo_id), int(user_id), str(commit_text), str(commit_url))
+    data = (int(repo_id), str(user_id), str(commit_text), str(commit_url))
     cur.execute(query, data)
 
     # commit query
@@ -193,26 +193,24 @@ def get_all_commit_logs(slack_id):
 
     result = []
 
-    git_id = get_git_uuid(slack_id)
-    if git_id is not None:
-        # Get new database instance
-        db = settings.getDatabase()
+    # Get new database instance
+    db = settings.getDatabase()
 
-        cur = db.cursor()
-        query = '''SELECT DR.name, LDC.message, LDC.url FROM dev_repo DR, log_dev_commit LDC WHERE LDC.user_id=%s AND LDC.repo_id=DR.id ORDER BY LDC.creation DESC;'''
-        cur.execute(query, int(git_id))
+    cur = db.cursor()
+    query = '''SELECT DR.name, LDC.message, LDC.url FROM dev_repo DR, log_dev_commit LDC WHERE LDC.user_id=%s AND LDC.repo_id=DR.id ORDER BY LDC.creation DESC;'''
+    cur.execute(query, str(slack_id))
 
-        for tup in cur:
-            repo_name = str(tup[0])
-            commit_text = str(tup[1])
-            commit_url = str(tup[2])
+    for tup in cur:
+        repo_name = str(tup[0])
+        commit_text = str(tup[1])
+        commit_url = str(tup[2])
 
-            data = (repo_name, commit_text, commit_url)
-            result.append(data)
+        data = (repo_name, commit_text, commit_url)
+        result.append(data)
 
-        # commit query
-        db.commit()
-        cur.close()
+    # commit query
+    db.commit()
+    cur.close()
 
     return result
 
@@ -230,27 +228,25 @@ def get_commit_logs(slack_id, start_date, end_date):
 
     result = []
 
-    git_id = get_git_uuid(slack_id)
-    if git_id is not None:
-        # Get new database instance
-        db = settings.getDatabase()
+    # Get new database instance
+    db = settings.getDatabase()
 
-        cur = db.cursor()
-        query = '''SELECT DR.name, LDC.message, LDC.url FROM dev_repo DR, log_dev_commit LDC WHERE LDC.user_id=%s AND LDC.repo_id=DR.id AND (LDC.creation BETWEEN %s and %s) ORDER BY LDC.creation DESC;'''
-        data = (int(git_id), str(start_date), str(end_date))
-        cur.execute(query, data)
+    cur = db.cursor()
+    query = '''SELECT DR.name, LDC.message, LDC.url FROM dev_repo DR, log_dev_commit LDC WHERE LDC.user_id=%s AND LDC.repo_id=DR.id AND (LDC.creation BETWEEN %s and %s) ORDER BY LDC.creation DESC;'''
+    data = (str(slack_id), str(start_date), str(end_date))
+    cur.execute(query, data)
 
-        for tup in cur:
-            repo_name = str(tup[0])
-            commit_text = str(tup[1])
-            commit_url = str(tup[2])
+    for tup in cur:
+        repo_name = str(tup[0])
+        commit_text = str(tup[1])
+        commit_url = str(tup[2])
 
-            c = (repo_name, commit_text, commit_url)
-            result.append(c)
+        c = (repo_name, commit_text, commit_url)
+        result.append(c)
 
-        # commit query
-        db.commit()
-        cur.close()
+    # commit query
+    db.commit()
+    cur.close()
 
     return result
 
