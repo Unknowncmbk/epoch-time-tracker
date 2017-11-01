@@ -61,7 +61,7 @@ def parse_request(data_form):
 					message_data = str(c['message'].encode('ascii', 'ignore'))
 					commit_url = str(c['url'])
 
-					repo.create_commit_log(repo_id, sender_id, message_data, commit_url)
+					repo.create_commit_log(repo_id=repo_id, user_id=slack_uuid, commit_text=message_data, commit_url=commit_url)
 					
 	return Response('Okay'), 200
 
