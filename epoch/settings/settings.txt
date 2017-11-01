@@ -5,6 +5,11 @@
       "user":"test_user",
       "pass":"test_pass"
    }, 
+   "general_settings":{ 
+      "company_name": "Example Company", 
+      "company_url": "http://sbahr.me", 
+      "company_icon_url": "https://avatars1.githubusercontent.com/u/11477825?v=3&s=200"
+   }, 
    "flask_settings":{ 
       "host_ip": "192.168.2.1", 
       "port": 5000
