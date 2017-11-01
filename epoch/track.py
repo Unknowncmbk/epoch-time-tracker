@@ -13,7 +13,7 @@ import datetime
 import time
 
 # the icon's url used in the bot that sends the response
-ICON_URL = 'https://avatars1.githubusercontent.com/u/11477825?v=3&s=200'
+ICON_URL = settings.getSettings().company_icon
 
 # configure a Slack server in order to send messages TO Slack
 slack_api_url = settings.getSettings().slack_api_url
@@ -109,14 +109,14 @@ def handle_add_command():
 
 	# attempt to format their input
 	try:
-		worked_hours_secs = float(worked_hours) * 3600
+		worked_hours_ms = float(worked_hours) * 3600000
 	except Exception as e:
 		print(e)
 		print('Unable to convert hours to representation... Are you sure it was entered correctly?')
 		return None
 
 	# add to their session log
-	user_session.create_user_session_log(user_data[0], worked_hours_secs, start_date, start_date, verify_uuid)
+	user_session.create_user_session_log(user_data[0], worked_hours_ms, start_date, start_date, verify_uuid)
 
 	print('Successfully added ' + str(worked_hours) + ' to ' + str(req_name) + '\'s session log for ' + str(start_date))
 
@@ -213,14 +213,14 @@ def handle_modify_command():
 
 	# attempt to format their input
 	try:
-		worked_hours_secs = float(worked_hours) * 3600
+		worked_hours_ms = float(worked_hours) * 3600000
 	except Exception as e:
 		print(e)
 		print('Unable to convert hours to representation... Are you sure it was entered correctly?')
 		return None
 
 	# add to their session log
-	user_session.update_user_session_log(user_data[0], worked_hours_secs, start_date, verify_uuid)
+	user_session.update_user_session_log(user_data[0], worked_hours_ms, start_date, verify_uuid)
 	print('Successfully modified ' + str(req_name) + '\'s session log for ' + str(start_date) + ' and set their worked hours to ' + str(worked_hours) + ' hours.')
 
 def handle_session_command():
@@ -270,7 +270,7 @@ def handle_session_command():
 		
 		# iterate and print
 		for log_id, user_id, work_time, start, end, approved in session_info:
-			hours = '%.2f' % (work_time / 3600.0)
+			hours = '%.2f' % (work_time / 3600000.0)
 
 			if approved == 'None':
 				approved = False
@@ -343,8 +343,8 @@ def handle_report_command():
 
 		print('\nUser report for ' + str(req_name) + ' between ' + str(start_date) + ' and ' + str(end_date) + ': \n')
 		
-		verified_hours = '%.2f' % (verified_time / 3600.0)
-		not_verified_hours = '%.2f' % (not_verified_time / 3600.0)
+		verified_hours = '%.2f' % (verified_time / 3600000.0)
+		not_verified_hours = '%.2f' % (not_verified_time / 3600000.0)
 		print(str(len(not_verified)) + ' transactions were NOT VERIFIED totalling ' + str(not_verified_hours) + ' hours.\n')
 		print(str(len(verified)) + ' transactions were VERIFIED totalling ' + str(verified_hours) + ' hours.\n')
 
@@ -508,7 +508,7 @@ def handle_verify_command():
 
 			not_verified_ids = []
 			for log_id, user_id, work_time, start, end, approved in not_verified:
-				hours = '%.2f' % (work_time / 3600.0)
+				hours = '%.2f' % (work_time / 3600000.0)
 				not_verified_ids.append(log_id)
 				print('Log ID #' + str(log_id) + ' shows ' + str(hours) + ' hours of work starting on ' + str(start) + '.')
 
