@@ -13,8 +13,13 @@ class User(object):
     def __init__(self, uuid, username):
         self.uuid = str(uuid)
         self.username = str(username)
-        self.work_time = 0
-        self.pause_time = 0
+
+        # how much time this user has currently worked in milliseconds
+        self.work_time_ms = 0
+        # how much time this user has been paused, in milliseconds
+        self.pause_time_ms = 0
+        # when we last sent out a notification, one per hour
+        self.notify_hour = 0
 
     def __str__(self):
         return 'uuid=' + str(self.uuid) + ", username=" + str(self.username)
@@ -88,7 +93,7 @@ def get_user(username):
 
     cur = db.cursor()
     query = '''SELECT uuid, username, title, team, git_id, bitbucket_email, monthly_hours FROM user WHERE username=%s;'''
-    cur.execute(query, str(username))
+    cur.execute(query, [str(username)])
 
     user_data = None
 
@@ -170,7 +175,7 @@ def get_goal_total(uuid):
 
     cur = db.cursor()
     query = '''SELECT monthly_hours FROM user WHERE uuid=%s;'''
-    cur.execute(query, str(uuid))
+    cur.execute(query, [str(uuid)])
 
     hours = 0
 
