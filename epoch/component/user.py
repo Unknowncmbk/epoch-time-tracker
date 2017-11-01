@@ -19,7 +19,7 @@ class User(object):
     def __str__(self):
         return 'uuid=' + str(self.uuid) + ", username=" + str(self.username)
 
-def create_user(uuid, username, title, team, git_id, monthly_hours):
+def create_user(uuid, username, title, team, git_id, bitbucket_email, monthly_hours):
     '''
     Creates the user in the database.
 
@@ -29,14 +29,15 @@ def create_user(uuid, username, title, team, git_id, monthly_hours):
         title: The title for this user, or their role
         team: The team ID that this user belongs to
         git_id: The github username
+        bitbucket_email: The email for the user's bitbucket
         monthly_hours: How many monthly hours this user is assigned
     '''
     # Get new database instance
     db = settings.getDatabase()
 
     cur = db.cursor()
-    query = '''INSERT INTO user (uuid, username, title, team, git_id, monthly_hours) VALUES (%s, %s, %s, %s, %s, %s);'''
-    data = (str(uuid), str(username), str(title), int(team), str(git_id), int(monthly_hours))
+    query = '''INSERT INTO user (uuid, username, title, team, git_id, bitbucket_email, monthly_hours) VALUES (%s, %s, %s, %s, %s, %s, %s);'''
+    data = (str(uuid), str(username), str(title), int(team), str(git_id), str(bitbucket_email), int(monthly_hours))
     cur.execute(query, data)
 
     # commit query
@@ -56,7 +57,7 @@ def exists(uuid):
 
     cur = db.cursor()
     query = '''SELECT COUNT(*) FROM user WHERE uuid=%s;'''
-    cur.execute(query, uuid)
+    cur.execute(query, [str(uuid)])
 
     valid = False
     for tup in cur:
@@ -86,7 +87,7 @@ def get_user(username):
     db = settings.getDatabase()
 
     cur = db.cursor()
-    query = '''SELECT uuid, username, title, team, git_id, monthly_hours FROM user WHERE username=%s;'''
+    query = '''SELECT uuid, username, title, team, git_id, bitbucket_email, monthly_hours FROM user WHERE username=%s;'''
     cur.execute(query, str(username))
 
     user_data = None
@@ -98,8 +99,9 @@ def get_user(username):
             title = str(tup[2])
             team_id = int(tup[3])
             git_id = str(tup[4])
-            monthly_hours = int(tup[5])
-            user_data = (uuid, name, title, team_id, git_id, monthly_hours)
+            bitbucket_email = str(tup[5])
+            monthly_hours = int(tup[6])
+            user_data = (uuid, name, title, team_id, git_id, bitbucket_email, monthly_hours)
 
     # commit query
     db.commit()
