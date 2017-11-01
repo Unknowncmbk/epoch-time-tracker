@@ -18,7 +18,7 @@ def create_user_session(uuid):
 
     cur = db.cursor()
     query = '''INSERT INTO user_session (user_id, state, work_time) VALUES (%s, 'OFFLINE', 0);'''
-    cur.execute(query, [uuid])
+    cur.execute(query, [str(uuid)])
 
     # commit query
     db.commit()
@@ -39,7 +39,7 @@ def get_state(uuid):
 
     cur = db.cursor()
     query = '''SELECT state FROM user_session WHERE user_id=%s;'''
-    cur.execute(query, [uuid])
+    cur.execute(query, [str(uuid)])
 
     state = None
     for tup in cur:
@@ -73,28 +73,31 @@ def set_state(uuid, state):
 
 def get_work_time(uuid):
     '''
-    Gets the work_time attribute from the user_session table.
+    Gets the work_time attribute from the user_session table, as milliseconds.
 
     Args:
         uuid: The uuid for that user
+
+    Returns:
+        The time this user has worked, in milliseconds.
     '''
     # Get new database instance
     db = settings.getDatabase()
 
     cur = db.cursor()
     query = '''SELECT work_time FROM user_session WHERE user_id=%s;'''
-    cur.execute(query, str(uuid))
+    cur.execute(query, [str(uuid)])
 
-    secs = 0
+    msecs = 0
 
     for tup in cur:
-        secs = int(tup[0])
+        msecs = int(tup[0])
 
     # commit query
     db.commit()
     cur.close()
 
-    return secs
+    return msecs
 
 def set_work_time(uuid, time):
     '''
@@ -102,7 +105,7 @@ def set_work_time(uuid, time):
 
     Args:
         uuid: The uuid for that user
-        time: The time in secs to set the work time for this user
+        time: The time, in msecs, to set the work time for this user
     '''
     # Get new database instance
     db = settings.getDatabase()
@@ -122,7 +125,7 @@ def update_work_time(uuid, incr):
 
     Args:
         uuid: The uuid for that user
-        incr: The time increment in seconds for that user
+        incr: The time increment in milliseconds for that user
     '''
     # Get new database instance
     db = settings.getDatabase()
@@ -148,7 +151,7 @@ def get_session_timestamp(uuid):
 
     cur = db.cursor()
     query = '''SELECT updated FROM user_session WHERE user_id=%s'''
-    cur.execute(query, str(uuid))
+    cur.execute(query, [str(uuid)])
 
     result = None
 
@@ -173,7 +176,7 @@ def set_session_timestamp(uuid):
 
     cur = db.cursor()
     query = '''UPDATE user_session SET updated=CURRENT_TIMESTAMP WHERE user_id=%s'''
-    cur.execute(query, str(uuid))
+    cur.execute(query, [str(uuid)])
 
     # commit query
     db.commit()
@@ -185,7 +188,7 @@ def create_user_session_log(uuid, work_time, start_time, end_time, verified=None
 
     Args:
         uuid: The uuid for that user
-        work_time: The amount of time in seconds for this user
+        work_time: The amount of time, in milliseconds, for this user
         start_time: The timestamp for when this user started
         end_time: The timstamp for when this user ended
         verified: The UUID of the user that verified this user's session
@@ -233,7 +236,7 @@ def update_user_session_log(uuid, new_work_time, timestamp, verified):
 
     Args:
         uuid: The uuid for that user
-        new_work_time: The amount of time in seconds for this user
+        new_work_time: The amount of time in milliseconds for this user
         timestamp: The start of that users session
         verified: The UUID of the user that verified this user's session
     '''
@@ -263,8 +266,8 @@ def get_total_worked(uuid):
     db = settings.getDatabase()
 
     cur = db.cursor()
-    query = '''SELECT SUM(work_time)/3600 as hours FROM log_user_session WHERE user_id=%s AND MONTH(start) = MONTH(CURRENT_DATE());'''
-    cur.execute(query, str(uuid))
+    query = '''SELECT SUM(work_time)/3600000 as hours FROM log_user_session WHERE user_id=%s AND MONTH(start) = MONTH(CURRENT_DATE());'''
+    cur.execute(query, [str(uuid)])
 
     hours = 0
 
