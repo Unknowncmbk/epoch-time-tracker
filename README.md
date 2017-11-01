@@ -32,6 +32,11 @@ Fill out the appropriate settings in [settings.txt](https://github.com/Unknowncm
 Database Credentials:
 - `Host/Database/User/Pass` for a MySQL server.
 
+General Settings:
+- `company_name`: The name of your company.
+- `company_url`: The URL to your company's website.
+- `company_icon_url`: The URL to an icon that represents your company logo.
+
 Flask Settings:
 - `host_ip`: The IP of the machine you are running this on. If you use localhost, POST payloads might not reach the application, so use the hard IP.
 - `port`: The port number to run flask on. 
