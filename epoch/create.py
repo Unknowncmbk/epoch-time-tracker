@@ -156,12 +156,15 @@ def handle_create_user():
 	# OPTIONAL
 	git_id = raw_input('What is this user\'s GitHub username (Ex: Unknowncmbk)?: ')
 
+	# OPTIONAL
+	bitbucket_email = raw_input('What is this user\'s Bitbucket email (Ex: stephenrbahr@gmail.com)?: ')
+
 	monthly_hours = raw_input('What is the expected monthly hours for this user? [160]: ')
 	if monthly_hours is None:
 		monthly_hours = 160
 	
 	# create the user
-	user.create_user(uuid, username, title, team_id, git_id, monthly_hours)
+	user.create_user(uuid, username, title, team_id, git_id, bitbucket_email, monthly_hours)
 	user_session.create_user_session(uuid)
 
 	print('User ' + str(username) + ' was successfully added to Epoch!')
