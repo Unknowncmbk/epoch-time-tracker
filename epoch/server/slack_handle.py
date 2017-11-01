@@ -5,6 +5,7 @@ from component import user
 from component import user_session
 from component import repo
 from util import slack_api
+from settings import settings
 
 # python modules
 from flask import Response
@@ -13,12 +14,12 @@ import datetime
 import json
 
 # the icon's url used in the bot that sends the response
-ICON_URL = 'https://avatars1.githubusercontent.com/u/11477825?v=3&s=200'
+ICON_URL = settings.getSettings().company_icon
+COMPANY_NAME = settings.getSettings().company_name
+COMPANY_URL = settings.getSettings().company_url
 
 # configure a Slack server in order to send messages TO Slack
-slack_api_url = 'https://hooks.slack.com/services/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'
-slack_headers = {'content-type': 'application/json'}
-slack_server = slack_api.SlackAPI(api_url=slack_api_url, headers=slack_headers)
+slack_server = settings.getSlack()
 
 def parse_request(data_form):
 	'''
@@ -91,16 +92,16 @@ def handle_command(user_obj, command, data):
 			user.log_state_change(user_obj.uuid, 'OFFLINE', 'ONLINE')
 
 			# get how long they worked
-			secs = user_session.get_work_time(user_obj.uuid)
+			msecs = user_session.get_work_time(user_obj.uuid)
 			start_time = user_session.get_session_timestamp(user_obj.uuid)
 			end_time = time.strftime('%Y-%m-%d %H:%M:%S')
 
 			# get the user's goal hours
 			goal_hours = user.determine_goal_hours_today(user_obj.uuid)
-			worked_hours = '%.2f' % (secs / 3600.0)
+			worked_hours = '%.2f' % (msecs / 3600000.0)
 
 			# create the session log
-			user_session.create_user_session_log(user_obj.uuid, secs, start_time, end_time)
+			user_session.create_user_session_log(user_obj.uuid, msecs, start_time, end_time)
 
 			# reset their work time to 0
 			user_session.set_work_time(user_obj.uuid, 0)
@@ -145,8 +146,9 @@ def handle_command(user_obj, command, data):
 		return Response(response=json.dumps(build_info_response(user_obj)), status=200, mimetype='application/json')
 	elif command == 'STATUS':
 
+		# temporarirly removes auth check
 		# check if it's an authorized user
-		if user_obj.username == 'stephen' or user_obj.username == 'peraldon':
+		if user_obj.username == 'stephen' or user_obj.username == 'peraldon' or 1==1:
 			return Response(response=json.dumps(build_status_response(user_obj)), status=200, mimetype='application/json')
 		else:
 			return Response('You are not authorized for this command.'), 200
@@ -166,8 +168,8 @@ def build_login_response(user_obj):
 
 	# create the attachment
 	contents = {}
-	contents['title'] = 'Isles Softworks'
-	contents['title_link'] = 'http://isles.io'
+	contents['title'] = COMPANY_NAME
+	contents['title_link'] = COMPANY_URL
 	contents['color'] = "good"
 
 	# Determine the text of the attachment
@@ -208,8 +210,8 @@ def build_logout_response(user_obj):
 
 	# create the attachment
 	contents = {}
-	contents['title'] = 'Isles Softworks'
-	contents['title_link'] = 'http://isles.io'
+	contents['title'] = COMPANY_NAME
+	contents['title_link'] = COMPANY_URL
 	contents['color'] = "danger"
 
 	# Determine the text of the attachment
@@ -250,8 +252,8 @@ def build_pause_response(user_obj):
 
 	# create the attachment
 	contents = {}
-	contents['title'] = 'Isles Softworks'
-	contents['title_link'] = 'http://isles.io'
+	contents['title'] = COMPANY_NAME
+	contents['title_link'] = COMPANY_URL
 	contents['color'] = "warning"
 
 	# Determine the text of the attachment
@@ -278,8 +280,8 @@ def build_resume_response(user_obj):
 
 	# create the attachment
 	contents = {}
-	contents['title'] = 'Isles Softworks'
-	contents['title_link'] = 'http://isles.io'
+	contents['title'] = COMPANY_NAME
+	contents['title_link'] = COMPANY_URL
 	contents['color'] = "good"
 
 	# Determine the text of the attachment
@@ -308,8 +310,8 @@ def build_info_response(user_obj):
 
 	# create the attachment
 	contents = {}
-	contents['title'] = 'Isles Softworks'
-	contents['title_link'] = 'http://isles.io'
+	contents['title'] = COMPANY_NAME
+	contents['title_link'] = COMPANY_URL
 
 	# color the attachment based off of state
 	if state == 'ONLINE':
@@ -330,7 +332,7 @@ def build_info_response(user_obj):
 		fields = []
 		f1 = {}
 		f1['title'] = 'Worked Time (session)'
-		f1['value'] = '%.2f' % (work_time / 3600.0)
+		f1['value'] = '%.2f' % (work_time / 3600000.0)
 		f1['short'] = True
 		f2 = {}
 		f2['title'] = 'Total Hours (month)'
@@ -393,7 +395,7 @@ def build_status_response(user_obj):
 			contents['title'] = str(name)
 
 			# TODO maybe a link to our workers page?
-			contents['title_link'] = 'http://isles.io'
+			contents['title_link'] = COMPANY_URL
 
 			# color the attachment based off of state
 			if state == 'ONLINE':
@@ -461,7 +463,7 @@ def handle_logout_payload(user_obj, start_date, end_date, worked_hours, goal_hou
 	contents = {}
 	contents['color'] = "#082b63"
 	contents['title'] = str(user_obj.username)
-	contents['title_link'] = 'http://isles.io'
+	contents['title_link'] = COMPANY_URL
 
 	# build the text
 	if commits is not None and len(commits) > 0:
