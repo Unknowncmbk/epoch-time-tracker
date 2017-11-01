@@ -106,6 +106,7 @@ def handle_bitbucket_post():
     # grab the data
     data = request.data
     print(data)
+    LOG.debug(str(time.ctime(time.time())) + ': Payload from Bitbucket: %s' % data)
 
     if data is not None:
         json_data = json.loads(data)
