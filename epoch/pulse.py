@@ -30,9 +30,7 @@ handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, backupCount=5)
 LOG.addHandler(handler)
 
 # configure a Slack server in order to send messages TO Slack
-slack_api_url = settings.getSettings().slack_api_url
-slack_headers = {'content-type': 'application/json'}
-slack_server = slack_api.SlackAPI(api_url=slack_api_url, headers=slack_headers)
+slack_server = settings.getSlack()
 
 class Pulse(Thread):
     def __init__(self):
@@ -86,11 +84,11 @@ class Pulse(Thread):
             print(e)
             LOG.debug(str(time.ctime(time.time())) + ': Exception checking pulse. Error: %s' % e)
 
-        try:
-            self.work()
-        except Exception as e:
-            print(e)
-            LOG.debug(str(time.ctime(time.time())) + ': Exception working. Error: %s' % e)
+        # try:
+        self.work()
+        # except Exception as e:
+        #     print(e)
+        #     LOG.debug(str(time.ctime(time.time())) + ': Exception working. Error: %s' % e)
 
 
     def check_pulse(self):
@@ -125,6 +123,11 @@ class Pulse(Thread):
         curr_time = time.time()
 
         if curr_time - self.credit_event > WORK_INTERVAL:
+
+            # amount of milliseconds to credit to everyone working
+            credit_amount = int((curr_time - self.credit_event) * 1000)
+
+            # update timestamp for last time we credited
             self.credit_event = curr_time
 
             # load all users from db, if they dont exist in hash yet
@@ -138,31 +141,35 @@ class Pulse(Thread):
 
                 if state == 'ONLINE':
                     # update in the db their work time
-                    user_session.update_work_time(user_obj.uuid, WORK_INTERVAL)
+                    user_session.update_work_time(user_obj.uuid, credit_amount)
 
-                    user_obj.work_time = user_obj.work_time + WORK_INTERVAL
-                    if user_obj.work_time % 3600 == 0:
+                    user_obj.work_time_ms = user_obj.work_time_ms + credit_amount
 
-                        # every hour notify them of how long they've worked
-                        hours_worked = user_obj.work_time / 3600
+                    # every hour notify them of how long they've worked
+                    hours_worked = int(user_obj.work_time_ms / 3600000)
+                    if hours_worked >= 1:
 
-                        # send slack message to channel
-                        slack_server.send_message(contents='You have been working for ' + str(hours_worked) + ' hours this session.', channel='@' + str(user_obj.username), username='Epoch Bot', icon_emoji=':loudspeaker:')
+                        # when did we last notify them about their time
+                        if user_obj.notify_hour < hours_worked:
+                            user_obj.notify_hour = user_obj.notify_hour + 1
+
+                            # send slack message to channel
+                            slack_server.send_message(contents='You have been working for ' + str(hours_worked) + ' hours this session.', channel='@' + str(user_obj.username), username='Epoch Bot', icon_emoji=':loudspeaker:')
 
                     # reset the pause time
-                    user_obj.pause_time = 0
+                    user_obj.pause_time_ms = 0
                 elif state == 'PAUSED':
-                    user_obj.pause_time = user_obj.pause_time + WORK_INTERVAL
+                    user_obj.pause_time_ms = user_obj.pause_time_ms + credit_amount
 
                     # if 15 minutes have passed, send slack notification
-                    if user_obj.pause_time > 15 * 60:
-                        user_obj.pause_time = 0
+                    if user_obj.pause_time_ms > 15 * 60 * 1000:
+                        user_obj.pause_time_ms = 0
                         # send slack message to channel
                         slack_server.send_message(contents='You have been idle/paused for 15 minutes. When you get back please use `/epoch resume`.', channel='@' + str(user_obj.username), username='Epoch Bot', icon_emoji=':loudspeaker:')
                 elif state == 'OFFLINE':
                     # reset their work time
-                    user_obj.work_time = 0
-                    user_obj.pause_time = 0
+                    user_obj.work_time_ms = 0
+                    user_obj.pause_time_ms = 0
 
     def load_users(self):
         '''
@@ -198,12 +205,12 @@ def force_logout_users():
                 user.log_state_change(uuid, 'OFFLINE', state)
 
                 # get how long they worked
-                secs = user_session.get_work_time(uuid)
+                msecs = user_session.get_work_time(uuid)
                 start_time = user_session.get_session_timestamp(uuid)
                 end_time = time.strftime('%Y-%m-%d %H:%M:%S')
 
                 # create the session log
-                user_session.create_user_session_log(uuid, secs, start_time, end_time)
+                user_session.create_user_session_log(uuid, msecs, start_time, end_time)
 
                 # reset their work time to 0
                 user_session.set_work_time(uuid, 0)
