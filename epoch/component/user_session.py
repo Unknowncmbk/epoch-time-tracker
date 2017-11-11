@@ -266,7 +266,7 @@ def get_total_worked(uuid):
     db = settings.getDatabase()
 
     cur = db.cursor()
-    query = '''SELECT SUM(work_time)/3600000 as hours FROM log_user_session WHERE user_id=%s AND MONTH(start) = MONTH(CURRENT_DATE());'''
+    query = '''SELECT SUM(work_time)/3600000 as hours FROM log_user_session WHERE user_id=%s AND MONTH(start) = MONTH(CURRENT_DATE()) AND YEAR(start) = YEAR(CURRENT_DATE());'''
     cur.execute(query, [str(uuid)])
 
     hours = 0
