@@ -31,7 +31,21 @@ def parse_request(data_form):
 		if not repo.repo_exists(repo_id, repo_name):
 			repo.set_repo(repo_id, repo_name)
 
-		if 'changesets' in data_form:
+
+		valid = False
+		# filter out for only UPDATEs else merging branches is hell
+		if 'refChanges' in data_form:
+			ref_changes = data_form['refChanges']
+			if ref_changes is not None and len(ref_changes) > 0:
+				for rc in ref_changes:
+					if 'type' in rc:
+						change_type = str(rc['type'])
+						if change_type == 'UPDATE':
+							valid = True
+						else:
+							print('Unable to validate this payload, as the ref change type was ' + str(change_type))
+
+		if 'changesets' in data_form and valid:
 			change_sets = data_form['changesets']
 
 			if 'values' in change_sets:
@@ -66,6 +80,8 @@ def parse_request(data_form):
 
 									# create the commit log
 									repo.create_commit_log(repo_id=repo_id, user_id=slack_uuid, commit_text=message_data, commit_url=commit_url)
+		else:
+			print('Unable to validate this payload, as the form was not valid.')
 					
 	return Response('Okay'), 200
 
