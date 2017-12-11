@@ -56,7 +56,8 @@ data = json.loads(json_data)
 s = data
 
 # ip of this machine
-host_ip = socket.gethostbyname(socket.getfqdn())
+#host_ip = socket.gethostbyname(socket.getfqdn())
+host_ip = socket.getfqdn()
 
 # construct settings object
 settings = Settings(host_ip=host_ip, db_host=s['database_creds']['host'], db_user=s['database_creds']['user'], db_pass=s['database_creds']['pass'], db_name=s['database_creds']['database'], company_name=s['general_settings']['company_name'], company_url=s['general_settings']['company_url'], company_icon=s['general_settings']['company_icon_url'], flask_ip=s['flask_settings']['host_ip'], flask_port=s['flask_settings']['port'], slack_api_token=s['slack_settings']['api_token'], slack_api_url=s['slack_settings']['api_url'], slack_webhook=s['slack_settings']['webhook_outgoing'], github_webhook=s['github_settings']['webhook_outgoing'])
