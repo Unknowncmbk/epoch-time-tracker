@@ -170,6 +170,7 @@ class Pulse(Thread):
                     # reset their work time
                     user_obj.work_time_ms = 0
                     user_obj.pause_time_ms = 0
+                    user_obj.notify_hour = 0
 
     def load_users(self):
         '''
