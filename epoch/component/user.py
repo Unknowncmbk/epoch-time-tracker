@@ -212,7 +212,7 @@ def determine_goal_hours_today(uuid):
         now = datetime.datetime.now()
         days_in_month = calendar.monthrange(now.year, now.month)[1]
 
-        days_left = days_in_month - current_day
+        days_left = days_in_month - current_day + 1
 
         if days_left <= 0:
             if number_left > 24:
