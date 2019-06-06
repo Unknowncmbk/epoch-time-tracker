@@ -51,6 +51,11 @@ Github Settings:
 
 ## Setup
 Setup a screen session to run ngrok, to expose localhost bindings. This is to allow SSL connections to Flask.
+For example, if your Flask server runs on port 5000, you will want to expose port 5000 by doing:
+
+```
+./ngrok http 5000
+```
 
 Create a directory to hold the module, and populate the contents with this project.
 ```
