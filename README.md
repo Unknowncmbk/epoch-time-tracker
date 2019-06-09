@@ -42,9 +42,8 @@ Flask Settings:
 - `port`: The port number to run flask on. 
 
 Slack Settings:
-- `api_token`: Your app's xoxp- token (available on the Install App page)
-- `api_url`: The webhook URL that you copied off the Incoming Webhook page
-- `webhook_outgoing`: Your app's Verification Token (available on the Basic Information page)
+- `api_url`: The custom Incoming Webhook "Webhook URL" that will post JSON to. 
+- `webhook_outgoing`: The "Token" field when configuring the Slash Command in Slack. This will be sent in the outgoing payload to verify the request came from your Slack Team.
 
 Github Settings:
 - `webhook_outgoing`: Your custom verification token that you use in your project's Settings/Webhooks file.
