@@ -45,8 +45,11 @@ Slack Settings:
 - `api_url`: The custom Incoming Webhook "Webhook URL" that will post JSON to. 
 - `webhook_outgoing`: The "Token" field when configuring the Slash Command in Slack. This will be sent in the outgoing payload to verify the request came from your Slack Team.
 
-Github Settings:
+GitHub Settings:
 - `webhook_outgoing`: Your custom verification token that you use in your project's Settings/Webhooks file.
+
+GitLab Settings:
+- `webhook_outgoing`: Your custom verification token that you use in your project's Settings/Integrations file.
 
 ## Setup
 Setup a screen session to run ngrok, to expose localhost bindings. This is to allow SSL connections to Flask.
