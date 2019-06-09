@@ -14,6 +14,9 @@ import sys
 # API Token for Slack, your app's xoxp- token (available on the Install App page)
 TOKEN = settings.getSettings().slack_api_token
 
+# the possible version control software we support
+SUPPORTED_VCS = ['GitHub', 'BitBucket', 'GitLab']
+
 def get_all_possible_users():
 	'''
 	Get a list of all possible users on this Slack.
@@ -153,11 +156,27 @@ def handle_create_user():
 	if team_id is None:
 		team_id = 1
 
-	# OPTIONAL
-	git_id = raw_input('What is this user\'s GitHub username (Ex: Unknowncmbk)?: ')
+	print('The following Version Control Softwares (VCS) are supported: \n')
+	for vcs in SUPPORTED_VCS:
+		print(vcs)
 
-	# OPTIONAL
-	bitbucket_email = raw_input('What is this user\'s Bitbucket email (Ex: stephenrbahr@gmail.com)?: ')
+	# git (github/gitlab) unique id
+	git_id = None
+	# the bitbucket email
+	bitbucket_email = None
+
+	vcs_input = raw_input('Which VCS does this user use (Ex: GitHub)?: ')
+	if vcs_input is not None:
+		vcs_input = str(vcs_input).lower()
+
+		if vcs_input == 'github':
+			git_id = raw_input('What is this user\'s GitHub username (Ex: Unknowncmbk)?: ')
+		elif vcs_input == 'bitbucket':
+			bitbucket_email = raw_input('What is this user\'s Bitbucket email (Ex: stephenrbahr@gmail.com)?: ')
+		elif vcs_input == 'gitlab':
+			git_id = raw_input('What is this user\'s GitLab username (Ex: Unknowncmbk)?: ')
+		else:
+			print('Skipping VCS settings for this user. We will not track any commit history for them!')
 
 	monthly_hours = raw_input('What is the expected monthly hours for this user? [160]: ')
 	if monthly_hours is None:
