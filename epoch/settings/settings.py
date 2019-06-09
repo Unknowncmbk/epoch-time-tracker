@@ -9,7 +9,7 @@ import socket
 import MySQLdb
 
 class Settings(object):
-    def __init__(self, host_ip, db_host, db_user, db_pass, db_name, company_name, company_url, company_icon, flask_ip, flask_port, slack_api_token, slack_api_url, slack_webhook, github_webhook):
+    def __init__(self, host_ip, db_host, db_user, db_pass, db_name, company_name, company_url, company_icon, flask_ip, flask_port, slack_api_url, slack_webhook, github_webhook):
         self.host_ip = host_ip
 
         # MySQL creds
@@ -59,7 +59,7 @@ s = data
 host_ip = socket.getfqdn()
 
 # construct settings object
-settings = Settings(host_ip=host_ip, db_host=s['database_creds']['host'], db_user=s['database_creds']['user'], db_pass=s['database_creds']['pass'], db_name=s['database_creds']['database'], company_name=s['general_settings']['company_name'], company_url=s['general_settings']['company_url'], company_icon=s['general_settings']['company_icon_url'], flask_ip=s['flask_settings']['host_ip'], flask_port=s['flask_settings']['port'], slack_api_token=s['slack_settings']['api_token'], slack_api_url=s['slack_settings']['api_url'], slack_webhook=s['slack_settings']['webhook_outgoing'], github_webhook=s['github_settings']['webhook_outgoing'])
+settings = Settings(host_ip=host_ip, db_host=s['database_creds']['host'], db_user=s['database_creds']['user'], db_pass=s['database_creds']['pass'], db_name=s['database_creds']['database'], company_name=s['general_settings']['company_name'], company_url=s['general_settings']['company_url'], company_icon=s['general_settings']['company_icon_url'], flask_ip=s['flask_settings']['host_ip'], flask_port=s['flask_settings']['port'], slack_api_url=s['slack_settings']['api_url'], slack_webhook=s['slack_settings']['webhook_outgoing'], github_webhook=s['github_settings']['webhook_outgoing'])
 
 # configure a Slack server in order to send messages TO Slack
 slack_api_url = settings.slack_api_url
