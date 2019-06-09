@@ -4,15 +4,10 @@
 from component import repo
 from component import user
 from component import user_session
-from util import slack_api
+from settings import settings
 
 # python modules
 from flask import Response
-
-# configure a Slack server in order to send messages TO Slack
-slack_api_url = 'https://hooks.slack.com/services/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'
-slack_headers = {'content-type': 'application/json'}
-slack_server = slack_api.SlackAPI(api_url=slack_api_url, headers=slack_headers)
 
 def parse_request(data_form):
 	'''
@@ -50,9 +45,8 @@ def parse_request(data_form):
 				user_state = user_session.get_state(slack_uuid)
 				if user_state == 'OFFLINE':
 					# send slack message to channel
-					slack_server.send_message(contents='I see you sent a commit for the ' + str(repo_name) + ' repository. You know you are OFFLINE with Epoch right?', channel=str(slack_uuid), username='Epoch Bot', icon_emoji=':loudspeaker:')
+					settings.getSlack().send_message(contents='I see you sent a commit for the ' + str(repo_name) + ' repository. You know you are OFFLINE with Epoch right?', channel=str(slack_uuid), username='Epoch Bot', icon_emoji=':loudspeaker:')
 
-			#if slack_uuid is not None:
 			if 'commits' in data_form:
 				commit_data = data_form['commits']
 
