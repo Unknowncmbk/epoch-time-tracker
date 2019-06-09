@@ -30,7 +30,6 @@ class Settings(object):
         self.flask_port = flask_port
 
         # slack api post settings
-        self.slack_api_token = slack_api_token
         self.slack_api_url = slack_api_url
 
         # external webhooks
