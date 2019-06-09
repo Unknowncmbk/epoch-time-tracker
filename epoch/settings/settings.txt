@@ -15,7 +15,6 @@
       "port": 5000
    }, 
    "slack_settings":{
-      "api_token":"xoxp-blahblahblah",
       "api_url":"https://hooks.slack.com/services/BLAH",
       "webhook_outgoing": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
    },
