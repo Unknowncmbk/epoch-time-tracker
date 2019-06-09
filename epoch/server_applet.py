@@ -4,6 +4,7 @@
 from server import slack_handle
 from server import git_handle
 from server import bitbucket_handle
+from server import gitlab_handle
 from settings import settings
 
 # python modules
@@ -31,6 +32,8 @@ app = Flask('Epoch')
 SLACK_WEBHOOK_OUTGOING = settings.getSettings().slack_webhook
 # outgoing webhook key specified by Github
 GITHUB_WEBHOOK_OUTGOING = settings.getSettings().github_webhook
+# outgoing webhook key specified by GitLab
+GITLAB_WEBHOOK_OUTGOING = settings.getSettings().gitlab_webhook
 
 @app.route('/services/slack', methods=['POST'])
 def handle_slack_post():
@@ -93,7 +96,6 @@ def handle_git_post():
     else:
         return Response('Malformed data request.'), 400
 
-
     return Response('Okay.'), 200
 
 @app.route('/services/bitbucket', methods=['POST'])
@@ -105,12 +107,47 @@ def handle_bitbucket_post():
 
     # grab the data
     data = request.data
-    print(data)
     LOG.debug(str(time.ctime(time.time())) + ': Payload from Bitbucket: %s' % data)
 
     if data is not None:
         json_data = json.loads(data)
         return bitbucket_handle.parse_request(json_data)
+    else:
+        return Response('Malformed data request.'), 400
+
+
+    return Response('Okay.'), 200
+
+@app.route('/services/gitlab', methods=['POST'])
+def handle_gitlab_post():
+    '''
+    Serves GitLab's POST requests to this applet.
+    '''
+    # TODO add access log
+
+    # load the header data
+    header_data = request.headers
+
+    # whether or not this is a verified request
+    verified_req = False
+
+    # the headers should be of type `werkzeug.datastructures.EnvironHeaders`
+    if header_data.has_key('X-Gitlab-Token'): 
+        # payload signature
+        payload_sig = str(header_data.get('X-Gitlab-Token'))
+
+        # if this is ours
+        if payload_sig == GITLAB_WEBHOOK_OUTGOING:
+            verified_req = True
+
+    if not verified_req:
+        return Response('Not authorized'), 400
+
+    # gitlab sends payload in the data section
+    data = request.data
+    if data is not None:
+        json_data = json.loads(data)
+        return gitlab_handle.parse_request(json_data)
     else:
         return Response('Malformed data request.'), 400
 
