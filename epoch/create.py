@@ -188,6 +188,17 @@ def handle_create_user():
 
 	print('User ' + str(username) + ' was successfully added to Epoch!')
 
+def handle_help():
+	print('This module is invoked in the following ways: \n')
+	print('python create.py help')
+	print('- Display this message.\n')
+	print('python create.py list')
+	print('- List users in Slack channel that do not yet have an account.\n')
+	print('python create.py team')
+	print('- Invoke main creation module for teams.\n')
+	print('python create.py user')
+	print('- Invoke main creation module for users.\n')
+
 
 # if ran from command line
 if __name__ == '__main__':
@@ -196,15 +207,7 @@ if __name__ == '__main__':
 		cmd = sys.argv[1].lower()
 
 		if cmd == 'help':
-			print('This module is invoked in the following ways: \n')
-			print('python create.py help')
-			print('- Display this message.\n')
-			print('python create.py list')
-			print('- List users in Slack channel that do not yet have an account.\n')
-			print('python create.py team')
-			print('- Invoke main creation module for teams.\n')
-			print('python create.py user')
-			print('- Invoke main creation module for users.\n')
+			handle_help()
 
 		elif cmd == 'list':
 			users = get_not_yet_registered()
@@ -222,3 +225,5 @@ if __name__ == '__main__':
 
 		elif cmd == 'team':
 			handle_create_team()
+	else:
+		handle_help()
