@@ -20,5 +20,8 @@
    },
    "github_settings":{
       "webhook_outgoing": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+   },
+   "gitlab_settings":{
+      "webhook_outgoing": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
    }
 }
