@@ -11,6 +11,7 @@
       "company_icon_url": "https://avatars1.githubusercontent.com/u/11477825?v=3&s=200"
    }, 
    "flask_settings":{ 
+      "api_token": "xpxo-ABCDE-FGHI-JKLMNOPQRSTUVWXYZ"
       "host_ip": "192.168.2.1", 
       "port": 5000
    }, 

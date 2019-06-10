@@ -42,6 +42,7 @@ Flask Settings:
 - `port`: The port number to run flask on. 
 
 Slack Settings:
+- `api_token`: When installing a custom app, you get a Slack API token in the OAuth/Perms section. 
 - `api_url`: The custom Incoming Webhook "Webhook URL" that will post JSON to. 
 - `webhook_outgoing`: The "Token" field when configuring the Slash Command in Slack. This will be sent in the outgoing payload to verify the request came from your Slack Team.
 
