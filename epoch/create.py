@@ -41,8 +41,6 @@ def get_all_possible_users():
 			print('Not a valid API call to Slack. Are you sure you supplied the API TOKEN?')
 			return None
 
-		print(response_data)
-
 		# JSON format according to https://api.slack.com/methods/users.list
 		members = response_data['members']
 		for member in members:
