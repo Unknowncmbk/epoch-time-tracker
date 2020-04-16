@@ -79,7 +79,7 @@ def handle_git_post():
         payload_sig = str(header_data.get('X-Hub-Signature'))
 
         # our signature
-        hmac_obj = hmac.new(GITHUB_WEBHOOK_OUTGOING, request.data, hashlib.sha1)
+        hmac_obj = hmac.new(str(GITHUB_WEBHOOK_OUTGOING), request.data, hashlib.sha1)
         signature = 'sha1=' + hmac_obj.hexdigest()
         
         # because we run python 2.6, this is insecure
