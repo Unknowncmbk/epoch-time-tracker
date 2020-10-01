@@ -535,17 +535,23 @@ def _handle_verify_session(verify_uuid, not_verified):
 
 	loop = True
 	while loop:
-		trans = raw_input('Enter the ID of the transaction to verify: ')
+		trans = raw_input('Enter the ID of the transaction to verify (or all): ')
 		if trans is None or trans == '':
 			loop = False
 			return None
 
-		parts = trans.split(',')
-		if len(parts) > 0:
-			for p in parts:
-				_verify_session(verify_uuid, not_verified, p)
+		if type(trans) is str and trans.lower() in ['all']:
+			# make a copy of not verified transactions
+			copy_verified = not_verified[:]
+			for not_ver_req in copy_verified:
+				_verify_session(verify_uuid, not_verified, not_ver_req)
 		else:
-			_verify_session(verify_uuid, not_verified, trans)
+			parts = trans.split(',')
+			if len(parts) > 0:
+				for p in parts:
+					_verify_session(verify_uuid, not_verified, p)
+			else:
+				_verify_session(verify_uuid, not_verified, trans)
 
 def _verify_session(verify_uuid, not_verified_ids, trans_id):
 	'''
